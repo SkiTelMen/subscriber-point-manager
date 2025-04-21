@@ -5,6 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import ClientsPage from "./pages/ClientsPage";
+import ClientDetailsPage from "./pages/ClientDetailsPage";
+import ClientFormPage from "./pages/ClientFormPage";
+import TinLookupPage from "./pages/TinLookupPage";
+import Layout from "./components/Layout";
+import { ClientProvider } from "./context/ClientContext";
 
 const queryClient = new QueryClient();
 
@@ -13,13 +19,21 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <ClientProvider>
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/clients" element={<ClientsPage />} />
+              <Route path="/clients/new" element={<ClientFormPage />} />
+              <Route path="/clients/:clientId" element={<ClientDetailsPage />} />
+              <Route path="/clients/:clientId/edit" element={<ClientFormPage />} />
+              <Route path="/tin-lookup" element={<TinLookupPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </ClientProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
