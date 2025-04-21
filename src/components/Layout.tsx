@@ -4,6 +4,8 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Users, ListFilter, LayoutDashboard } from "lucide-react";
+import LanguageSelector from "./LanguageSelector";
+import { useLocale } from "@/context/LocaleContext";
 
 interface NavItemProps {
   to: string;
@@ -34,6 +36,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const { t } = useLocale();
 
   return (
     <div className="flex min-h-screen">
@@ -43,22 +46,24 @@ const Layout = ({ children }: LayoutProps) => {
           <h1 className="text-xl font-bold">Subscriber Manager</h1>
           <p className="text-sm text-muted-foreground">Client Management System</p>
         </div>
+        {/* Language selector at the top of sidebar */}
+        <LanguageSelector />
         <nav className="space-y-2">
           <NavItem
             to="/"
-            label="Dashboard"
+            label={t("dashboard")}
             icon={<LayoutDashboard className="w-5 h-5" />}
             isActive={currentPath === "/"}
           />
           <NavItem
             to="/clients"
-            label="Clients"
+            label={t("totalClients")}
             icon={<Users className="w-5 h-5" />}
             isActive={currentPath.startsWith("/clients")}
           />
           <NavItem
             to="/tin-lookup"
-            label="TIN Lookup"
+            label={t("tinLookup")}
             icon={<ListFilter className="w-5 h-5" />}
             isActive={currentPath === "/tin-lookup"}
           />
@@ -69,7 +74,7 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="md:hidden w-full fixed top-0 z-10 bg-background border-b p-4">
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-bold">Subscriber Manager</h1>
-          {/* Mobile menu would go here if needed */}
+          {/* Optionally add LanguageSelector for mobile too, if needed */}
         </div>
       </div>
 

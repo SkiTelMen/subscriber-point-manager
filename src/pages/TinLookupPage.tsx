@@ -19,12 +19,14 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Search } from "lucide-react";
+import { useLocale } from "@/context/LocaleContext";
 
 const TinLookupPage = () => {
   const { getSubscriberPointsByTin } = useClients();
   const [tin, setTin] = useState("");
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [searchResults, setSearchResults] = useState<ReturnType<typeof getSubscriberPointsByTin>>(null);
+  const { t } = useLocale();
 
   const handleSearch = () => {
     const results = getSubscriberPointsByTin(tin);
@@ -34,28 +36,28 @@ const TinLookupPage = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <h1 className="text-3xl font-bold">TIN Lookup</h1>
+      <h1 className="text-3xl font-bold">{t("tinLookup")}</h1>
       <p className="text-muted-foreground">
-        Look up subscriber points and validity dates by Tax Identification Number (TIN)
+        {t("expiringDesc")}
       </p>
 
       <Card>
         <CardHeader>
-          <CardTitle>Search by TIN</CardTitle>
+          <CardTitle>{t("searchTin")}</CardTitle>
           <CardDescription>
-            Enter a TIN to find all subscriber points and their validity dates
+            {t("expiringDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex space-x-2">
             <Input
-              placeholder="Enter TIN..."
+              placeholder={t("searchTin")}
               value={tin}
               onChange={(e) => setTin(e.target.value)}
             />
             <Button onClick={handleSearch} disabled={!tin}>
               <Search className="mr-2 h-4 w-4" />
-              Search
+              {t("searchTin")}
             </Button>
           </div>
         </CardContent>
@@ -64,11 +66,11 @@ const TinLookupPage = () => {
       {searchPerformed && (
         <Card>
           <CardHeader>
-            <CardTitle>Search Results</CardTitle>
+            <CardTitle>{t("searchTin")}</CardTitle>
             <CardDescription>
               {searchResults 
-                ? `Found ${searchResults.subscriberPoints.length} subscriber points for client: ${searchResults.client.name}`
-                : "No results found for the provided TIN"}
+                ? `${t("found")} ${searchResults.subscriberPoints.length} ${t("subscriberPoints")} ${t("forClient")}: ${searchResults.client.name}`
+                : t("noResults")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -76,7 +78,7 @@ const TinLookupPage = () => {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Client Name</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t("client") + " " + t("name")}</h3>
                     <p>{searchResults.client.name}</p>
                   </div>
                   <div>
@@ -84,11 +86,11 @@ const TinLookupPage = () => {
                     <p>{searchResults.client.tin}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Contact Person</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t("contactPerson")}</h3>
                     <p>{searchResults.client.contactPerson}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground">Phone</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t("phone")}</h3>
                     <p>{searchResults.client.phoneNumber}</p>
                   </div>
                 </div>
@@ -98,10 +100,10 @@ const TinLookupPage = () => {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Subscriber Point Name</TableHead>
-                          <TableHead>Contract ID</TableHead>
-                          <TableHead>Validity Date</TableHead>
-                          <TableHead>Status</TableHead>
+                          <TableHead>{t("subscriberPointName") || "Subscriber Point Name"}</TableHead>
+                          <TableHead>{t("contractId") || "Contract ID"}</TableHead>
+                          <TableHead>{t("validityDate") || "Validity Date"}</TableHead>
+                          <TableHead>{t("status") || "Status"}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -116,7 +118,7 @@ const TinLookupPage = () => {
                               <TableCell>{validityDate.toLocaleDateString()}</TableCell>
                               <TableCell>
                                 <span className={`px-2 py-1 rounded-full text-xs ${isValid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                  {isValid ? 'Valid' : 'Expired'}
+                                  {isValid ? t("valid") : t("expired")}
                                 </span>
                               </TableCell>
                             </TableRow>
@@ -126,11 +128,11 @@ const TinLookupPage = () => {
                     </Table>
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No subscriber points found for this client.</p>
+                  <p className="text-muted-foreground">{t("noSubscriberPointsFound") || "No subscriber points found for this client."}</p>
                 )}
               </div>
             ) : (
-              <p className="text-muted-foreground">No client found with the provided TIN. Please check the TIN and try again.</p>
+              <p className="text-muted-foreground">{t("noClientFoundTin") || "No client found with the provided TIN. Please check the TIN and try again."}</p>
             )}
           </CardContent>
         </Card>
@@ -140,3 +142,4 @@ const TinLookupPage = () => {
 };
 
 export default TinLookupPage;
+
