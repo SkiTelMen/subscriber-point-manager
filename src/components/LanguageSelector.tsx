@@ -1,0 +1,23 @@
+
+import React from "react";
+import { useLocale } from "@/context/LocaleContext";
+
+const LanguageSelector = () => {
+  const { locale, setLocale, t } = useLocale();
+
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      <label className="text-sm text-muted-foreground">{t("selectLanguage")}</label>
+      <select
+        value={locale}
+        onChange={e => setLocale(e.target.value as "en" | "ru")}
+        className="border rounded px-2 py-1 text-sm"
+      >
+        <option value="en">{t("english")}</option>
+        <option value="ru">{t("russian")}</option>
+      </select>
+    </div>
+  );
+};
+
+export default LanguageSelector;

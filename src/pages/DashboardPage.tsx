@@ -11,19 +11,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Users, FileText, Calendar, PlusCircle, Search } from "lucide-react";
+import { useLocale } from "@/context/LocaleContext";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const DashboardPage = () => {
   const { clients } = useClients();
   const navigate = useNavigate();
+  const { t } = useLocale();
 
   // Calculate statistics
   const totalClients = clients.length;
-  
   const totalContracts = clients.reduce(
     (sum, client) => sum + client.contracts.length,
     0
   );
-  
   const totalSubscriberPoints = clients.reduce(
     (sum, client) =>
       sum +
@@ -63,27 +64,27 @@ const DashboardPage = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
+      <LanguageSelector />
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold">{t("dashboard")}</h1>
         <div className="flex space-x-2">
           <Button onClick={() => navigate("/clients/new")}>
             <PlusCircle className="mr-2 h-4 w-4" />
-            New Client
+            {t("newClient")}
           </Button>
           <Button variant="outline" onClick={() => navigate("/tin-lookup")}>
             <Search className="mr-2 h-4 w-4" />
-            TIN Lookup
+            {t("tinLookup")}
           </Button>
         </div>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-1">
-              <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
-              <CardDescription>All registered clients</CardDescription>
+              <CardTitle className="text-sm font-medium">{t("totalClients")}</CardTitle>
+              <CardDescription>{t("allRegisteredClients")}</CardDescription>
             </div>
             <Users className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
@@ -94,8 +95,8 @@ const DashboardPage = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-1">
-              <CardTitle className="text-sm font-medium">Total Contracts</CardTitle>
-              <CardDescription>Active service contracts</CardDescription>
+              <CardTitle className="text-sm font-medium">{t("totalContracts")}</CardTitle>
+              <CardDescription>{t("activeServiceContracts")}</CardDescription>
             </div>
             <FileText className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
@@ -106,8 +107,8 @@ const DashboardPage = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-1">
-              <CardTitle className="text-sm font-medium">Subscriber Points</CardTitle>
-              <CardDescription>All registered points</CardDescription>
+              <CardTitle className="text-sm font-medium">{t("subscriberPoints")}</CardTitle>
+              <CardDescription>{t("allRegisteredPoints")}</CardDescription>
             </div>
             <Calendar className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
@@ -121,8 +122,8 @@ const DashboardPage = () => {
         {/* Recently Added Clients */}
         <Card className="md:col-span-1">
           <CardHeader>
-            <CardTitle>Recent Clients</CardTitle>
-            <CardDescription>Recently added clients</CardDescription>
+            <CardTitle>{t("recentClients")}</CardTitle>
+            <CardDescription>{t("recentlyAddedClients")}</CardDescription>
           </CardHeader>
           <CardContent>
             {recentClients.length > 0 ? (
@@ -134,13 +135,13 @@ const DashboardPage = () => {
                       <div className="text-sm text-muted-foreground">TIN: {client.tin}</div>
                     </div>
                     <Button variant="ghost" size="sm" onClick={() => navigate(`/clients/${client.id}`)}>
-                      View
+                      {t("view")}
                     </Button>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-muted-foreground">No clients added yet.</p>
+              <p className="text-muted-foreground">{t("noClients")}</p>
             )}
           </CardContent>
         </Card>
@@ -148,8 +149,8 @@ const DashboardPage = () => {
         {/* Expiring Subscriber Points */}
         <Card className="md:col-span-1">
           <CardHeader>
-            <CardTitle>Expiring Soon</CardTitle>
-            <CardDescription>Subscriber points expiring in the next 30 days</CardDescription>
+            <CardTitle>{t("expiringSoon")}</CardTitle>
+            <CardDescription>{t("expiringDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             {expiringPoints.length > 0 ? (
@@ -159,7 +160,7 @@ const DashboardPage = () => {
                     <div>
                       <div className="font-medium">{point.pointName}</div>
                       <div className="text-sm text-muted-foreground">
-                        Client: {point.clientName} | Expires: {new Date(point.validityDate).toLocaleDateString()}
+                        {t("client")}: {point.clientName} | {t("expires")}: {new Date(point.validityDate).toLocaleDateString()}
                       </div>
                     </div>
                     <Button
@@ -167,13 +168,13 @@ const DashboardPage = () => {
                       size="sm"
                       onClick={() => navigate(`/clients/${point.clientId}`)}
                     >
-                      View
+                      {t("view")}
                     </Button>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-muted-foreground">No subscriber points expiring soon.</p>
+              <p className="text-muted-foreground">{t("noExpiring")}</p>
             )}
           </CardContent>
         </Card>
