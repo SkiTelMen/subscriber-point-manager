@@ -1,61 +1,9 @@
-
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Translation resources
+// Translation resources - only keeping Russian
 const resources = {
-  en: {
-    translation: {
-      // Dashboard
-      dashboard: "Dashboard",
-      newClient: "New Client",
-      tinLookup: "TIN Lookup",
-      totalClients: "Total Clients",
-      allRegisteredClients: "All registered clients",
-      totalContracts: "Total Contracts",
-      activeServiceContracts: "Active service contracts",
-      subscriberPoints: "Subscriber Points",
-      allRegisteredPoints: "All registered points",
-      recentClients: "Recent Clients",
-      recentlyAddedClients: "Recently added clients",
-      view: "View",
-      noClients: "No clients available",
-      
-      // Language Selector
-      selectLanguage: "Select Language",
-      english: "English",
-      russian: "Russian",
-      
-      // Contract-related
-      contracts: "Contracts",
-      addContract: "Add Contract",
-      contractNumber: "Contract Number",
-      contractDate: "Contract Date",
-      cancel: "Cancel",
-      add: "Add",
-      noContracts: "No contracts available",
-      date: "Date",
-      
-      // Subscriber points
-      expiringSubscriberPoints: "Expiring Subscriber Points",
-      expiredSubscriberPoints: "Expired Subscriber Points",
-      noExpiringPoints: "No subscriber points expiring soon",
-      noExpiredPoints: "No expired subscriber points",
-      networkNumber: "Network Number",
-      type: "Type",
-      client: "Client",
-      hardware: "HW",
-      validityDate: "Validity Date",
-      validUntil: "Valid Until",
-      daysExpired: "days expired",
-      daysUntilExpiry: "days until expiry",
-      addSubscriberPoint: "Add Subscriber Point",
-      subscriberPointName: "Subscriber Point Name",
-      selectType: "Select Type",
-      noSubscriberPoints: "No subscriber points available"
-    }
-  },
   ru: {
     translation: {
       // Dashboard
@@ -75,7 +23,6 @@ const resources = {
       
       // Language Selector
       selectLanguage: "Выбрать язык",
-      english: "Английский",
       russian: "Русский",
       
       // Contract-related
@@ -114,9 +61,10 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'en',
+    fallbackLng: 'ru',
+    lng: 'ru', // Force Russian as default
     interpolation: {
-      escapeValue: false // React already escapes by default
+      escapeValue: false
     },
     detection: {
       order: ['localStorage', 'navigator'],
