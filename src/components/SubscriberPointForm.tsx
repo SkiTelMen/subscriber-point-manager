@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useClients } from "@/context/ClientContext";
+import { useLocale } from "@/context/LocaleContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,6 +19,7 @@ import { PlusCircle } from "lucide-react";
 
 const subscriberPointSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  networkNumber: z.string().min(1, { message: "Network number is required" }),
   validityDate: z.string().refine((val) => {
     const date = new Date(val);
     return !isNaN(date.getTime());
@@ -33,33 +35,49 @@ interface SubscriberPointFormProps {
 
 const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps) => {
   const { addSubscriberPoint } = useClients();
+  const { t } = useLocale();
 
   const form = useForm<SubscriberPointFormData>({
     resolver: zodResolver(subscriberPointSchema),
     defaultValues: {
       name: "",
-      validityDate: new Date().toISOString().split("T")[0], // Today's date in YYYY-MM-DD format
+      networkNumber: "",
+      validityDate: new Date().toISOString().split("T")[0],
     },
   });
 
   const onSubmit = (data: SubscriberPointFormData) => {
-    addSubscriberPoint(clientId, contractId, data.name, data.validityDate);
+    addSubscriberPoint(clientId, contractId, data.name, data.validityDate, data.networkNumber);
     form.reset();
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <h4 className="text-sm font-medium">Add Subscriber Point</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h4 className="text-sm font-medium">{t("addSubscriberPoint")}</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Subscriber Point Name</FormLabel>
+                <FormLabel>{t("subscriberPointName")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter name" {...field} />
+                  <Input placeholder={t("subscriberPointName")} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="networkNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("networkNumber")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("networkNumber")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -71,7 +89,7 @@ const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps)
             name="validityDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Validity Date</FormLabel>
+                <FormLabel>{t("validityDate")}</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
@@ -84,7 +102,7 @@ const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps)
         <div className="flex justify-end">
           <Button type="submit" size="sm" className="mt-2">
             <PlusCircle className="w-4 h-4 mr-2" />
-            Add
+            {t("addClient")}
           </Button>
         </div>
       </form>

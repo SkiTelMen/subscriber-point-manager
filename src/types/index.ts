@@ -22,5 +22,6 @@ export interface SubscriberPoint {
   id: string;
   contractId: string;
   name: string;
+  networkNumber: string;
   validityDate: string; // ISO date string
 }

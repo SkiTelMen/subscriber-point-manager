@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 type Locale = "en" | "ru";
@@ -47,6 +46,19 @@ const translations: Record<Locale, Record<string, string>> = {
     expired: "Expired",
     noSubscriberPointsFound: "No subscriber points found for this client.",
     noClientFoundTin: "No client found with the provided TIN. Please check the TIN and try again.",
+    editClient: "Edit Client",
+    clientInformation: "Client Information",
+    basicInformation: "Basic information about the client",
+    contactInformation: "Contact Information",
+    howToReach: "How to reach the client",
+    addresses: "Addresses",
+    legalAndActual: "Legal and actual addresses",
+    contractsAndPoints: "Contracts and Subscriber Points",
+    manageContractsPoints: "Manage client contracts and subscriber points",
+    networkNumber: "Network Number",
+    backToClients: "Back to Clients",
+    editClientInformation: "Edit Client Information",
+    createNewClient: "Create a New Client",
   },
   ru: {
     dashboard: "Главная",
@@ -86,6 +98,19 @@ const translations: Record<Locale, Record<string, string>> = {
     expired: "Истёк",
     noSubscriberPointsFound: "У этого клиента нет абонентских точек.",
     noClientFoundTin: "Клиент с указанным ИНН не найден. Проверьте ИНН и попробуйте снова.",
+    editClient: "Редактировать клиента",
+    clientInformation: "Информация о клиенте",
+    basicInformation: "Основная информация о клиенте",
+    contactInformation: "Контактная информация",
+    howToReach: "Как связаться с клиентом",
+    addresses: "Адреса",
+    legalAndActual: "Юридический и фактический адреса",
+    contractsAndPoints: "Договоры и абонентские точки",
+    manageContractsPoints: "Управление договорами и абонентскими точками",
+    networkNumber: "Номер сети",
+    backToClients: "Назад к клиентам",
+    editClientInformation: "Редактировать информацию о клиенте",
+    createNewClient: "Создать нового клиента",
   }
 };
 
@@ -110,4 +135,3 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     </LocaleContext.Provider>
   );
 };
-

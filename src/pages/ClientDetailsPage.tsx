@@ -2,6 +2,7 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useClients } from "@/context/ClientContext";
+import { useLocale } from "@/context/LocaleContext";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
@@ -17,6 +18,7 @@ const ClientDetailsPage = () => {
   const { clientId } = useParams<{ clientId: string }>();
   const { getClient } = useClients();
   const navigate = useNavigate();
+  const { t } = useLocale();
 
   const client = getClient(clientId || "");
 
@@ -26,12 +28,12 @@ const ClientDetailsPage = () => {
         <div className="flex items-center space-x-4 mb-6">
           <Button variant="ghost" onClick={() => navigate("/clients")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Clients
+            {t("backToClients")}
           </Button>
         </div>
         <div className="text-center py-10">
-          <h1 className="text-2xl font-bold mb-2">Client Not Found</h1>
-          <p className="text-muted-foreground">The client you are looking for does not exist.</p>
+          <h1 className="text-2xl font-bold mb-2">{t("clientNotFound")}</h1>
+          <p className="text-muted-foreground">{t("noClientFoundTin")}</p>
         </div>
       </div>
     );
@@ -43,26 +45,26 @@ const ClientDetailsPage = () => {
         <div className="flex items-center space-x-4">
           <Button variant="ghost" onClick={() => navigate("/clients")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Clients
+            {t("backToClients")}
           </Button>
           <h1 className="text-3xl font-bold">{client.name}</h1>
         </div>
         <Button onClick={() => navigate(`/clients/${client.id}/edit`)}>
           <Edit className="mr-2 h-4 w-4" />
-          Edit Client
+          {t("editClient")}
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Client Information</CardTitle>
-            <CardDescription>Basic information about the client</CardDescription>
+            <CardTitle>{t("clientInformation")}</CardTitle>
+            <CardDescription>{t("basicInformation")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Name</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">{t("name")}</h3>
                 <p>{client.name}</p>
               </div>
               <div>
@@ -79,21 +81,21 @@ const ClientDetailsPage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
-            <CardDescription>How to reach the client</CardDescription>
+            <CardTitle>{t("contactInformation")}</CardTitle>
+            <CardDescription>{t("howToReach")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Phone Number</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">{t("phone")}</h3>
                 <p>{client.phoneNumber}</p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Contact Person</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">{t("contactPerson")}</h3>
                 <p>{client.contactPerson}</p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Contact Person Phone</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">{t("phone")}</h3>
                 <p>{client.contactPersonPhone}</p>
               </div>
             </div>
@@ -103,17 +105,17 @@ const ClientDetailsPage = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Addresses</CardTitle>
-          <CardDescription>Legal and actual addresses</CardDescription>
+          <CardTitle>{t("addresses")}</CardTitle>
+          <CardDescription>{t("legalAndActual")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Legal Address</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">{t("legalAddress")}</h3>
               <p>{client.legalAddress}</p>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Actual Address</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">{t("actualAddress")}</h3>
               <p>{client.actualAddress}</p>
             </div>
           </div>
@@ -122,8 +124,8 @@ const ClientDetailsPage = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Contracts and Subscriber Points</CardTitle>
-          <CardDescription>Manage client contracts and subscriber points</CardDescription>
+          <CardTitle>{t("contractsAndPoints")}</CardTitle>
+          <CardDescription>{t("manageContractsPoints")}</CardDescription>
         </CardHeader>
         <CardContent>
           <ContractSection client={client} />
