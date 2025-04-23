@@ -15,7 +15,7 @@ interface ClientContextType {
     name: string, 
     networkNumber: string,
     validityDate: string,
-    type: 'client' | 'hardware'
+    type: 'Coordinator' | 'hardware'
   ) => SubscriberPoint;
   deleteSubscriberPoint: (clientId: string, contractId: string, pointId: string) => void;
   getClient: (clientId: string) => Client | undefined;
@@ -98,7 +98,7 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
     name: string, 
     networkNumber: string,
     validityDate: string,
-    type: 'client' | 'hardware'
+    type: 'Coordinator' | 'hardware'
   ): SubscriberPoint => {
     const newSubscriberPoint: SubscriberPoint = {
       id: generateId(),

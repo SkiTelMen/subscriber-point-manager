@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,7 +30,7 @@ const subscriberPointSchema = z.object({
     const date = new Date(val);
     return !isNaN(date.getTime());
   }, { message: "Please enter a valid date" }),
-  type: z.enum(['client', 'hardware'], { required_error: "Type is required" })
+  type: z.enum(['Coordinator', 'hardware'], { required_error: "Type is required" })
 });
 
 type SubscriberPointFormData = z.infer<typeof subscriberPointSchema>;
@@ -51,7 +50,7 @@ const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps)
       name: "",
       networkNumber: "",
       validityDate: new Date().toISOString().split("T")[0],
-      type: 'client'
+      type: 'Coordinator'
     },
   });
 
@@ -113,7 +112,7 @@ const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps)
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="client">{t("client")}</SelectItem>
+                    <SelectItem value="Coordinator">{t("Coordinator")}</SelectItem>
                     <SelectItem value="hardware">{t("hardware")}</SelectItem>
                   </SelectContent>
                 </Select>

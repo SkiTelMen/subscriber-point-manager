@@ -14,12 +14,22 @@ import {
 import { ChevronDown, Search, Filter, ArrowUpDown } from 'lucide-react';
 import { Client, Contract, SubscriberPoint } from '@/types';
 
+// Define types for SortConfig and FilterConfig
+type SortConfig = {
+  key: keyof SubscriberPointWithDetails | null;
+  direction: 'asc' | 'desc';
+};
+
+type FilterConfig = {
+  [key in keyof SubscriberPointWithDetails]?: string;
+};
+
 interface SubscriberPointWithDetails {
   id: string;
   name: string;
   networkNumber: string;
   validityDate: string;
-  type: 'client' | 'hardware';
+  type: 'Coordinator' | 'hardware';
   contractNumber: string;
   contractDate: string;
   clientName: string;
