@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useClients } from "@/context/ClientContext";
@@ -34,6 +35,11 @@ const DashboardPage = () => {
       ),
     0
   );
+
+  // Get recently added clients (up to 5)
+  const recentClients = [...clients]
+    .sort((a, b) => b.id.localeCompare(a.id))
+    .slice(0, 5);
 
   return (
     <div className="container mx-auto py-6 space-y-6">
