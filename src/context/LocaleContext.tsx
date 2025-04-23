@@ -55,7 +55,6 @@ const translations: Record<Locale, Record<string, string>> = {
     legalAndActual: "Legal and actual addresses",
     contractsAndPoints: "Contracts and Subscriber Points",
     manageContractsPoints: "Manage client contracts and subscriber points",
-    networkNumber: "Network Number",
     backToClients: "Back to Clients",
     editClientInformation: "Edit Client Information",
     createNewClient: "Create a New Client",
@@ -75,6 +74,8 @@ const translations: Record<Locale, Record<string, string>> = {
     daysExpired: "days expired",
     noExpiringPoints: "No subscriber points expiring soon",
     noExpiredPoints: "No expired subscriber points",
+    networkNumber: "Network Number",
+    type: "Type",
     groupedByClient: "Grouped by client"
   },
   ru: {
@@ -102,7 +103,7 @@ const translations: Record<Locale, Record<string, string>> = {
     selectLanguage: "Выберите язык:",
     english: "Английский",
     russian: "Русский",
-    found: "Н��йдено",
+    found: "Найдено",
     forClient: "для клиента",
     noResults: "По вашему запросу не найдено результатов",
     contactPerson: "Контактное лицо",
@@ -124,7 +125,6 @@ const translations: Record<Locale, Record<string, string>> = {
     legalAndActual: "Юридический и фактический адреса",
     contractsAndPoints: "Договоры и абонентские точки",
     manageContractsPoints: "Управление договорами и абонентскими точками",
-    networkNumber: "Номер сети",
     backToClients: "Назад к клиентам",
     editClientInformation: "Редактировать информацию о клиенте",
     createNewClient: "Создать нового клиента",
@@ -144,6 +144,8 @@ const translations: Record<Locale, Record<string, string>> = {
     daysExpired: "дней как истёк",
     noExpiringPoints: "Нет абонентских точек с близким сроком истечения",
     noExpiredPoints: "Нет истёкших абонентских точек",
+    networkNumber: "Номер сети",
+    type: "Тип",
     groupedByClient: "Сгруппировано по клиентам"
   }
 };

@@ -35,33 +35,6 @@ const DashboardPage = () => {
     0
   );
 
-  // Find expiring subscriber points (within the next 60 days)
-  const now = new Date();
-  const sixtyDaysFromNow = new Date();
-  sixtyDaysFromNow.setDate(now.getDate() + 60);
-
-  const expiringPoints = clients.flatMap(client =>
-    client.contracts.flatMap(contract =>
-      contract.subscriberPoints
-        .filter(point => {
-          const validityDate = new Date(point.validityDate);
-          return validityDate > now && validityDate < sixtyDaysFromNow;
-        })
-        .map(point => ({
-          clientName: client.name,
-          clientId: client.id,
-          tin: client.tin,
-          pointName: point.name,
-          validityDate: point.validityDate,
-        }))
-    )
-  );
-
-  // Get recently added clients (up to 5)
-  const recentClients = [...clients]
-    .sort((a, b) => b.id.localeCompare(a.id))
-    .slice(0, 5);
-
   return (
     <div className="container mx-auto py-6 space-y-6">
       <LanguageSelector />
@@ -144,39 +117,6 @@ const DashboardPage = () => {
               </div>
             ) : (
               <p className="text-muted-foreground">{t("noClients")}</p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Expiring Subscriber Points */}
-        <Card className="md:col-span-1">
-          <CardHeader>
-            <CardTitle>{t("expiringSoon")}</CardTitle>
-            <CardDescription>{t("expiringDesc")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {expiringPoints.length > 0 ? (
-              <div className="space-y-4">
-                {expiringPoints.map((point, index) => (
-                  <div key={index} className="flex justify-between items-center">
-                    <div>
-                      <div className="font-medium">{point.pointName}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {t("client")}: {point.clientName} | {t("expires")}: {new Date(point.validityDate).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/clients/${point.clientId}`)}
-                    >
-                      {t("view")}
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-muted-foreground">{t("noExpiring")}</p>
             )}
           </CardContent>
         </Card>
