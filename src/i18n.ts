@@ -1,3 +1,4 @@
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -51,7 +52,22 @@ const resources = {
       addSubscriberPoint: "Добавить абонентскую точку",
       subscriberPointName: "Название абонентской точки",
       selectType: "Выберите тип",
-      noSubscriberPoints: "Нет доступных абонентских точек"
+      noSubscriberPoints: "Нет доступных абонентских точек",
+      
+      // Table view
+      search: "Поиск",
+      filter: "Фильтр",
+      reset: "Сбросить",
+      customerName: "Имя клиента",
+      tin: "ИНН",
+      pointName: "Название точки",
+      pointValidity: "Срок действия",
+      sortAsc: "По возрастанию",
+      sortDesc: "По убыванию",
+      clearFilter: "Очистить фильтр",
+      applyFilter: "Применить фильтр",
+      subscriberPointsList: "Список абонентских точек",
+      allSubscriberPoints: "Все абонентские точки"
     }
   }
 };

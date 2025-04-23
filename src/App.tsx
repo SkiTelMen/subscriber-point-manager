@@ -10,6 +10,7 @@ import ClientsPage from "./pages/ClientsPage";
 import ClientDetailsPage from "./pages/ClientDetailsPage";
 import ClientFormPage from "./pages/ClientFormPage";
 import TinLookupPage from "./pages/TinLookupPage";
+import SubscriberPointsPage from "./pages/SubscriberPointsPage";
 import Layout from "./components/Layout";
 import { ClientProvider } from "./context/ClientContext";
 import { LocaleProvider } from "./context/LocaleContext";
@@ -31,6 +32,7 @@ const App = () => (
                 <Route path="/clients/new" element={<ClientFormPage />} />
                 <Route path="/clients/:clientId" element={<ClientDetailsPage />} />
                 <Route path="/clients/:clientId/edit" element={<ClientFormPage />} />
+                <Route path="/subscriber-points" element={<SubscriberPointsPage />} />
                 <Route path="/tin-lookup" element={<TinLookupPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

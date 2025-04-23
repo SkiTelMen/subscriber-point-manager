@@ -3,7 +3,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Users, ListFilter, LayoutDashboard } from "lucide-react";
+import { Users, ListFilter, LayoutDashboard, Calendar } from "lucide-react";
 import LanguageSelector from "./LanguageSelector";
 import { useLocale } from "@/context/LocaleContext";
 
@@ -60,6 +60,12 @@ const Layout = ({ children }: LayoutProps) => {
             label={t("totalClients")}
             icon={<Users className="w-5 h-5" />}
             isActive={currentPath.startsWith("/clients")}
+          />
+          <NavItem
+            to="/subscriber-points"
+            label={t("subscriberPoints")}
+            icon={<Calendar className="w-5 h-5" />}
+            isActive={currentPath === "/subscriber-points"}
           />
           <NavItem
             to="/tin-lookup"
