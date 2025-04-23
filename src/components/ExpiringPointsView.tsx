@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useClients } from '@/context/ClientContext';
 import { useLocale } from '@/context/LocaleContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Client, SubscriberPoint } from '@/types';
+import { cn } from '@/lib/utils';
 
 interface GroupedPoint extends SubscriberPoint {
   clientName: string;
@@ -13,6 +14,8 @@ interface GroupedPoint extends SubscriberPoint {
 const ExpiringPointsView = () => {
   const { clients } = useClients();
   const { t } = useLocale();
+  const [selectedExpiredGroup, setSelectedExpiredGroup] = useState<string | null>(null);
+  const [selectedExpiringGroup, setSelectedExpiringGroup] = useState<string | null>(null);
 
   const now = new Date();
   const sixtyDaysFromNow = new Date();
@@ -58,33 +61,52 @@ const ExpiringPointsView = () => {
     }, {} as Record<string, GroupedPoint[]>);
   };
 
-  const renderPointsGroup = (points: GroupedPoint[], isExpired: boolean) => {
+  const renderPointsGroup = (
+    points: GroupedPoint[], 
+    isExpired: boolean, 
+    selectedGroup: string | null,
+    setSelectedGroup: (clientName: string | null) => void
+  ) => {
     const grouped = groupPointsByClient(points);
     
     return Object.entries(grouped).map(([clientName, clientPoints]) => (
       <div key={clientName} className="mb-4">
-        <h3 className="font-medium text-lg mb-2">{clientName}</h3>
-        <div className="space-y-2">
-          {clientPoints.map((point) => (
-            <div key={point.id} className="p-3 bg-accent rounded-md">
-              <div className="font-medium">{point.name}</div>
-              <div className="text-sm text-muted-foreground">
-                {t("networkNumber")}: {point.networkNumber} | {t("type")}: {point.type}
+        <button
+          onClick={() => setSelectedGroup(selectedGroup === clientName ? null : clientName)}
+          className={cn(
+            "w-full text-left p-3 bg-accent hover:bg-accent/80 rounded-md transition-colors",
+            selectedGroup === clientName && "ring-2 ring-primary"
+          )}
+        >
+          <div className="font-medium text-lg">{clientName}</div>
+          <div className="text-sm text-muted-foreground">
+            {clientPoints.length} {t("subscriberPoints")}
+          </div>
+        </button>
+        
+        {selectedGroup === clientName && (
+          <div className="mt-2 space-y-2 pl-4">
+            {clientPoints.map((point) => (
+              <div key={point.id} className="p-3 bg-background border rounded-md">
+                <div className="font-medium">{point.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  {t("networkNumber")}: {point.networkNumber} | {t("type")}: {point.type}
+                </div>
+                <div className="text-sm">
+                  {isExpired ? (
+                    <span className="text-destructive">
+                      {Math.abs(point.daysUntil)} {t("daysExpired")}
+                    </span>
+                  ) : (
+                    <span className="text-warning">
+                      {point.daysUntil} {t("daysUntilExpiry")}
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className="text-sm">
-                {isExpired ? (
-                  <span className="text-destructive">
-                    {Math.abs(point.daysUntil)} {t("daysExpired")}
-                  </span>
-                ) : (
-                  <span className="text-warning">
-                    {point.daysUntil} {t("daysUntilExpiry")}
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     ));
   };
@@ -97,7 +119,7 @@ const ExpiringPointsView = () => {
         </CardHeader>
         <CardContent>
           {expiringPoints.length > 0 ? (
-            renderPointsGroup(expiringPoints, false)
+            renderPointsGroup(expiringPoints, false, selectedExpiringGroup, setSelectedExpiringGroup)
           ) : (
             <p className="text-muted-foreground">{t("noExpiringPoints")}</p>
           )}
@@ -110,7 +132,7 @@ const ExpiringPointsView = () => {
         </CardHeader>
         <CardContent>
           {expiredPoints.length > 0 ? (
-            renderPointsGroup(expiredPoints, true)
+            renderPointsGroup(expiredPoints, true, selectedExpiredGroup, setSelectedExpiredGroup)
           ) : (
             <p className="text-muted-foreground">{t("noExpiredPoints")}</p>
           )}
@@ -121,3 +143,4 @@ const ExpiringPointsView = () => {
 };
 
 export default ExpiringPointsView;
+
