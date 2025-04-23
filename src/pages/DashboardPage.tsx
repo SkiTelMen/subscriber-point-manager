@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useClients } from "@/context/ClientContext";
@@ -13,6 +12,7 @@ import {
 import { Users, FileText, Calendar, PlusCircle, Search } from "lucide-react";
 import { useLocale } from "@/context/LocaleContext";
 import LanguageSelector from "@/components/LanguageSelector";
+import ExpiringPointsView from "@/components/ExpiringPointsView";
 
 const DashboardPage = () => {
   const { clients } = useClients();
@@ -35,17 +35,17 @@ const DashboardPage = () => {
     0
   );
 
-  // Find expiring subscriber points (within the next 30 days)
+  // Find expiring subscriber points (within the next 60 days)
   const now = new Date();
-  const thirtyDaysFromNow = new Date();
-  thirtyDaysFromNow.setDate(now.getDate() + 30);
+  const sixtyDaysFromNow = new Date();
+  sixtyDaysFromNow.setDate(now.getDate() + 60);
 
   const expiringPoints = clients.flatMap(client =>
     client.contracts.flatMap(contract =>
       contract.subscriberPoints
         .filter(point => {
           const validityDate = new Date(point.validityDate);
-          return validityDate > now && validityDate < thirtyDaysFromNow;
+          return validityDate > now && validityDate < sixtyDaysFromNow;
         })
         .map(point => ({
           clientName: client.name,
@@ -117,6 +117,8 @@ const DashboardPage = () => {
           </CardContent>
         </Card>
       </div>
+
+      <ExpiringPointsView />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Recently Added Clients */}

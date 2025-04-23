@@ -1,4 +1,3 @@
-
 import { Client, Contract, SubscriberPoint } from "@/types";
 
 // Local storage keys
@@ -54,17 +53,21 @@ export const deleteClient = (clientId: string): void => {
 };
 
 // Add a contract to a client
-export const addContract = (clientId: string): Contract | null => {
-  const clients = loadClients();
-  const clientIndex = clients.findIndex(c => c.id === clientId);
-  
-  if (clientIndex === -1) return null;
-  
+export const addContract = (clientId: string, contractNumber: string, contractDate: string): Contract => {
   const newContract: Contract = {
     id: generateId(),
     clientId,
+    contractNumber,
+    contractDate,
     subscriberPoints: []
   };
+  
+  const clients = loadClients();
+  const clientIndex = clients.findIndex(c => c.id === clientId);
+  
+  if (clientIndex === -1) {
+    throw new Error(`Client with id ${clientId} not found`);
+  }
   
   clients[clientIndex].contracts.push(newContract);
   saveClients(clients);
@@ -77,22 +80,31 @@ export const addSubscriberPoint = (
   clientId: string,
   contractId: string,
   name: string,
-  validityDate: string
-): SubscriberPoint | null => {
-  const clients = loadClients();
-  const clientIndex = clients.findIndex(c => c.id === clientId);
-  
-  if (clientIndex === -1) return null;
-  
-  const contractIndex = clients[clientIndex].contracts.findIndex(c => c.id === contractId);
-  if (contractIndex === -1) return null;
-  
+  networkNumber: string,
+  validityDate: string,
+  type: 'client' | 'hardware'
+): SubscriberPoint => {
   const newSubscriberPoint: SubscriberPoint = {
     id: generateId(),
     contractId,
     name,
-    validityDate
+    networkNumber,
+    validityDate,
+    type
   };
+  
+  const clients = loadClients();
+  const clientIndex = clients.findIndex(c => c.id === clientId);
+  
+  if (clientIndex === -1) {
+    throw new Error(`Client with id ${clientId} not found`);
+  }
+  
+  const contractIndex = clients[clientIndex].contracts.findIndex(c => c.id === contractId);
+    
+  if (contractIndex === -1) {
+    throw new Error(`Contract with id ${contractId} not found`);
+  }
   
   clients[clientIndex].contracts[contractIndex].subscriberPoints.push(newSubscriberPoint);
   saveClients(clients);
