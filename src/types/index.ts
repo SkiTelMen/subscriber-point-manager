@@ -2,8 +2,8 @@
 export interface Client {
   id: string;
   name: string;
-  tin: string; // Tax Identification Number
-  ogrn: string; // Primary State Registration Number
+  tin: string;
+  ogrn: string;
   legalAddress: string;
   actualAddress: string;
   phoneNumber: string;
@@ -15,6 +15,8 @@ export interface Client {
 export interface Contract {
   id: string;
   clientId: string;
+  contractNumber: string;
+  contractDate: string;
   subscriberPoints: SubscriberPoint[];
 }
 
@@ -23,5 +25,6 @@ export interface SubscriberPoint {
   contractId: string;
   name: string;
   networkNumber: string;
-  validityDate: string; // ISO date string
+  validityDate: string;
+  type: 'client' | 'hardware';
 }

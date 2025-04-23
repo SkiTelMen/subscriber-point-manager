@@ -8,6 +8,13 @@ import { useLocale } from "@/context/LocaleContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Form,
   FormControl,
   FormField,
@@ -24,6 +31,7 @@ const subscriberPointSchema = z.object({
     const date = new Date(val);
     return !isNaN(date.getTime());
   }, { message: "Please enter a valid date" }),
+  type: z.enum(['client', 'hardware'], { required_error: "Type is required" })
 });
 
 type SubscriberPointFormData = z.infer<typeof subscriberPointSchema>;
@@ -43,11 +51,19 @@ const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps)
       name: "",
       networkNumber: "",
       validityDate: new Date().toISOString().split("T")[0],
+      type: 'client'
     },
   });
 
   const onSubmit = (data: SubscriberPointFormData) => {
-    addSubscriberPoint(clientId, contractId, data.name, data.validityDate, data.networkNumber);
+    addSubscriberPoint(
+      clientId,
+      contractId,
+      data.name,
+      data.networkNumber,
+      data.validityDate,
+      data.type
+    );
     form.reset();
   };
 
@@ -55,7 +71,7 @@ const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps)
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <h4 className="text-sm font-medium">{t("addSubscriberPoint")}</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="name"
@@ -86,6 +102,28 @@ const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps)
 
           <FormField
             control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("type")}</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("selectType")} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="client">{t("client")}</SelectItem>
+                    <SelectItem value="hardware">{t("hardware")}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="validityDate"
             render={({ field }) => (
               <FormItem>
@@ -102,7 +140,7 @@ const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps)
         <div className="flex justify-end">
           <Button type="submit" size="sm" className="mt-2">
             <PlusCircle className="w-4 h-4 mr-2" />
-            {t("addClient")}
+            {t("addSubscriberPoint")}
           </Button>
         </div>
       </form>
