@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n';
@@ -11,16 +12,16 @@ interface LocaleContextType {
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
 
 export const LocaleProvider = ({ children }: { children: ReactNode }) => {
-  const { i18n: i18nInstance, t } = useTranslation();
-  const [locale, setLocale] = useState(i18nInstance.language);
+  const { t } = useTranslation();
+  const [locale, setLocale] = useState(i18n.language);
 
   const changeLocale = useCallback(
     (newLocale: string) => {
-      i18nInstance.changeLanguage(newLocale).then(() => {
+      i18n.changeLanguage(newLocale).then(() => {
         setLocale(newLocale);
       });
     },
-    [i18nInstance]
+    []
   );
 
   return (

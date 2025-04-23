@@ -10,7 +10,7 @@ const LanguageSelector = () => {
       <label className="text-sm text-muted-foreground">{t("selectLanguage")}</label>
       <select
         value={locale}
-        onChange={e => setLocale(e.target.value as "en" | "ru")}
+        onChange={e => setLocale(e.target.value)}
         className="border rounded px-2 py-1 text-sm"
       >
         <option value="en">{t("english")}</option>
