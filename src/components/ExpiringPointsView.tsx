@@ -143,4 +143,3 @@ const ExpiringPointsView = () => {
 };
 
 export default ExpiringPointsView;
-
