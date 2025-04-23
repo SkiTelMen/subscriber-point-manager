@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useClients } from '@/context/ClientContext';
 import { useLocale } from '@/context/LocaleContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -24,27 +24,20 @@ interface SubscriberPointWithDetails {
   contractDate: string;
   clientName: string;
   clientTin: string;
+  clientId: string;
 }
-
-type SortConfig = {
-  key: keyof SubscriberPointWithDetails | null;
-  direction: 'asc' | 'desc';
-};
-
-type FilterConfig = {
-  [key in keyof SubscriberPointWithDetails]?: string;
-};
 
 const SubscriberPointsTable = () => {
   const { clients } = useClients();
   const { t } = useLocale();
+  const navigate = useNavigate();
+  
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
   const [filterConfig, setFilterConfig] = useState<FilterConfig>({});
   const [showFilterMenu, setShowFilterMenu] = useState<boolean>(false);
   const [tempFilters, setTempFilters] = useState<FilterConfig>({});
   
-  // Prepare subscriber points data with all the details
   const subscriberPointsWithDetails = useMemo(() => {
     const points: SubscriberPointWithDetails[] = [];
     
@@ -60,7 +53,8 @@ const SubscriberPointsTable = () => {
             contractNumber: contract.contractNumber,
             contractDate: contract.contractDate,
             clientName: client.name,
-            clientTin: client.tin
+            clientTin: client.tin,
+            clientId: client.id
           });
         });
       });
@@ -69,10 +63,8 @@ const SubscriberPointsTable = () => {
     return points;
   }, [clients]);
   
-  // Filter logic
   const filteredPoints = useMemo(() => {
     return subscriberPointsWithDetails.filter(point => {
-      // Global search filter
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
         const matchesSearch = 
@@ -85,7 +77,6 @@ const SubscriberPointsTable = () => {
         if (!matchesSearch) return false;
       }
       
-      // Column-specific filters
       for (const key in filterConfig) {
         if (filterConfig[key as keyof SubscriberPointWithDetails]) {
           const filterValue = filterConfig[key as keyof SubscriberPointWithDetails]?.toLowerCase();
@@ -101,7 +92,6 @@ const SubscriberPointsTable = () => {
     });
   }, [subscriberPointsWithDetails, searchTerm, filterConfig]);
   
-  // Sort logic
   const sortedPoints = useMemo(() => {
     const sorted = [...filteredPoints];
     if (sortConfig.key) {
@@ -118,7 +108,6 @@ const SubscriberPointsTable = () => {
     return sorted;
   }, [filteredPoints, sortConfig]);
   
-  // Sort handler
   const handleSort = (key: keyof SubscriberPointWithDetails) => {
     setSortConfig({
       key,
@@ -126,25 +115,26 @@ const SubscriberPointsTable = () => {
     });
   };
   
-  // Reset all filters
   const resetFilters = () => {
     setFilterConfig({});
     setTempFilters({});
     setSearchTerm('');
   };
   
-  // Apply filters from the filter menu
   const applyFilters = () => {
     setFilterConfig(tempFilters);
     setShowFilterMenu(false);
   };
   
-  // Initialize temp filters when filter menu opens
   useEffect(() => {
     if (showFilterMenu) {
       setTempFilters({...filterConfig});
     }
   }, [showFilterMenu, filterConfig]);
+
+  const handleClientClick = (clientId: string) => {
+    navigate(`/clients/${clientId}`);
+  };
 
   return (
     <div className="space-y-4">
@@ -252,6 +242,12 @@ const SubscriberPointsTable = () => {
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 </div>
               </TableHead>
+              <TableHead onClick={() => handleSort('type')} className="cursor-pointer">
+                <div className="flex items-center">
+                  {t('type')}
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                </div>
+              </TableHead>
               <TableHead onClick={() => handleSort('validityDate')} className="cursor-pointer">
                 <div className="flex items-center">
                   {t('validityDate')}
@@ -276,18 +272,29 @@ const SubscriberPointsTable = () => {
             {sortedPoints.length > 0 ? (
               sortedPoints.map((point) => (
                 <TableRow key={point.id}>
-                  <TableCell>{point.clientName}</TableCell>
+                  <TableCell 
+                    className="cursor-pointer hover:text-blue-600"
+                    onClick={() => handleClientClick(point.clientId)}
+                  >
+                    {point.clientName}
+                  </TableCell>
                   <TableCell>{point.clientTin}</TableCell>
                   <TableCell>{point.name}</TableCell>
                   <TableCell>{point.networkNumber}</TableCell>
+                  <TableCell>{point.type}</TableCell>
                   <TableCell>{point.validityDate}</TableCell>
-                  <TableCell>{point.contractNumber}</TableCell>
+                  <TableCell 
+                    className="cursor-pointer hover:text-blue-600"
+                    onClick={() => handleClientClick(point.clientId)}
+                  >
+                    {point.contractNumber}
+                  </TableCell>
                   <TableCell>{point.contractDate}</TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   {t('noSubscriberPoints')}
                 </TableCell>
               </TableRow>
