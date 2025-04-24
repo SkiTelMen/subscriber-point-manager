@@ -8,7 +8,7 @@ interface ClientContextType {
   addClient: (client: Omit<Client, "id" | "contracts">) => void;
   updateClient: (client: Client) => void;
   deleteClient: (clientId: string) => void;
-  addContract: (clientId: string, contractNumber: string, contractDate: string) => Contract;
+  addContract: (clientId: string, contractNumber: string, contractDate: string, numberOfApprovals?: string) => Contract;
   deleteContract: (clientId: string, contractId: string) => void;
   addSubscriberPoint: (
     clientId: string, 
@@ -55,12 +55,13 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
     setClients(prev => prev.filter(client => client.id !== clientId));
   };
 
-  const addContract = (clientId: string, contractNumber: string, contractDate: string): Contract => {
+  const addContract = (clientId: string, contractNumber: string, contractDate: string, numberOfApprovals?: string): Contract => {
     const newContract: Contract = {
       id: generateId(),
       clientId,
       contractNumber,
       contractDate,
+      numberOfApprovals,
       subscriberPoints: []
     };
 

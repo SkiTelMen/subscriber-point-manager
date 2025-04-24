@@ -17,6 +17,7 @@ export interface Contract {
   clientId: string;
   contractNumber: string;
   contractDate: string;
+  numberOfApprovals?: string;
   subscriberPoints: SubscriberPoint[];
 }
 

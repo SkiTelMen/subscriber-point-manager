@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { useLocale } from "@/context/LocaleContext";
 
 interface AddContractFormProps {
-  onSubmit: (contractNumber: string, contractDate: string, numberOfApprovals?: number) => void;
+  onSubmit: (contractNumber: string, contractDate: string, numberOfApprovals?: string) => void;
   onCancel: () => void;
 }
 
@@ -20,7 +20,7 @@ const AddContractForm = ({ onSubmit, onCancel }: AddContractFormProps) => {
       onSubmit(
         contractNumber,
         contractDate,
-        numberOfApprovals ? parseInt(numberOfApprovals) : undefined
+        numberOfApprovals || undefined
       );
       setContractNumber("");
       setContractDate("");
@@ -52,12 +52,10 @@ const AddContractForm = ({ onSubmit, onCancel }: AddContractFormProps) => {
         <div>
           <label className="block text-sm font-medium mb-1">{t("numberOfApprovals")}</label>
           <input
-            type="number"
+            type="text"
             value={numberOfApprovals}
             onChange={(e) => setNumberOfApprovals(e.target.value)}
             className="w-full p-2 border rounded"
-            min="0"
-            step="1"
           />
         </div>
         <div className="flex justify-end space-x-2">

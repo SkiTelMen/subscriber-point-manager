@@ -19,8 +19,8 @@ const ContractSection = ({ client }: ContractSectionProps) => {
   const [expandedContract, setExpandedContract] = useState<string | null>(null);
   const [showNewContractForm, setShowNewContractForm] = useState(false);
 
-  const handleAddContract = (contractNumber: string, contractDate: string, numberOfApprovals?: number) => {
-    addContract(client.id, contractNumber, contractDate);
+  const handleAddContract = (contractNumber: string, contractDate: string, numberOfApprovals?: string) => {
+    addContract(client.id, contractNumber, contractDate, numberOfApprovals);
     setShowNewContractForm(false);
   };
 
