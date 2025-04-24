@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +11,7 @@ import BasicInfoFields from "./client-form/BasicInfoFields";
 import AddressFields from "./client-form/AddressFields";
 import ContactFields from "./client-form/ContactFields";
 import FormActions from "./client-form/FormActions";
+import { toast } from "sonner";
 
 interface ClientFormProps {
   client?: Client;
@@ -79,19 +79,37 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
   }, [form.watch, sameAddress, samePhone, form]);
 
   const onSubmit = (data: ClientFormData) => {
-    if (isEditing && client) {
-      updateClient({
-        ...client,
-        ...data,
-      });
-    } else {
-      addClient(data);
-    }
-    
-    if (onSuccess) {
-      onSuccess();
-    } else {
-      navigate("/clients");
+    try {
+      const clientData = {
+        name: data.name,
+        tin: data.tin,
+        ogrn: data.ogrn,
+        legalAddress: data.legalAddress,
+        actualAddress: data.actualAddress,
+        phoneNumber: data.phoneNumber,
+        contactPerson: data.contactPerson,
+        contactPersonPhone: data.contactPersonPhone,
+      };
+
+      if (isEditing && client) {
+        updateClient({
+          ...client,
+          ...clientData,
+        });
+        toast.success("Client updated successfully");
+      } else {
+        addClient(clientData);
+        toast.success("Client created successfully");
+      }
+      
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        navigate("/clients");
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      toast.error("An error occurred while saving the client");
     }
   };
 
