@@ -1,10 +1,11 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -40,6 +41,9 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
   const { addClient, updateClient } = useClients();
   const navigate = useNavigate();
   const isEditing = !!client;
+  
+  const [sameAddress, setSameAddress] = useState(false);
+  const [samePhone, setSamePhone] = useState(false);
 
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
@@ -63,6 +67,37 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
       contactPersonPhone: "",
     },
   });
+
+  // Handle checkbox changes
+  const handleSameAddressChange = (checked: boolean) => {
+    setSameAddress(checked);
+    if (checked) {
+      const legalAddress = form.getValues("legalAddress");
+      form.setValue("actualAddress", legalAddress);
+    }
+  };
+
+  const handleSamePhoneChange = (checked: boolean) => {
+    setSamePhone(checked);
+    if (checked) {
+      const phoneNumber = form.getValues("phoneNumber");
+      form.setValue("contactPersonPhone", phoneNumber);
+    }
+  };
+
+  // Watch for legal address changes
+  React.useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (sameAddress && name === "legalAddress") {
+        form.setValue("actualAddress", value.legalAddress || "");
+      }
+      if (samePhone && name === "phoneNumber") {
+        form.setValue("contactPersonPhone", value.phoneNumber || "");
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form.watch, sameAddress, samePhone, form]);
 
   const onSubmit = (data: ClientFormData) => {
     if (isEditing && client) {
@@ -151,19 +186,40 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="actualAddress"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Actual Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter actual address" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="space-y-2">
+            <FormField
+              control={form.control}
+              name="actualAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Actual Address</FormLabel>
+                  <div className="space-y-2">
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter actual address" 
+                        {...field} 
+                        disabled={sameAddress} 
+                      />
+                    </FormControl>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="same-address" 
+                        checked={sameAddress} 
+                        onCheckedChange={handleSameAddressChange} 
+                      />
+                      <label 
+                        htmlFor="same-address"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Same as legal address
+                      </label>
+                    </div>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
@@ -193,19 +249,40 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="contactPersonPhone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Contact Person Phone</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter contact person phone" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="space-y-2">
+            <FormField
+              control={form.control}
+              name="contactPersonPhone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contact Person Phone</FormLabel>
+                  <div className="space-y-2">
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter contact person phone" 
+                        {...field} 
+                        disabled={samePhone} 
+                      />
+                    </FormControl>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="same-phone" 
+                        checked={samePhone} 
+                        onCheckedChange={handleSamePhoneChange} 
+                      />
+                      <label 
+                        htmlFor="same-phone"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Same as main phone number
+                      </label>
+                    </div>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <div className="flex justify-end space-x-4">

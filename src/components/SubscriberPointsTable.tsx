@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useClients } from '@/context/ClientContext';
@@ -29,7 +30,7 @@ interface SubscriberPointWithDetails {
   name: string;
   networkNumber: string;
   validityDate: string;
-  type: 'Coordinator' | 'hardware';
+  type: 'Coordinator' | 'Client';
   contractNumber: string;
   contractDate: string;
   clientName: string;

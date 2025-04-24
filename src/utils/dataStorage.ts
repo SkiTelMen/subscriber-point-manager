@@ -1,3 +1,4 @@
+
 import { Client, Contract, SubscriberPoint } from "@/types";
 
 // Local storage keys
@@ -82,7 +83,7 @@ export const addSubscriberPoint = (
   name: string,
   networkNumber: string,
   validityDate: string,
-  type: 'client' | 'hardware'
+  type: 'Coordinator' | 'Client'
 ): SubscriberPoint => {
   const newSubscriberPoint: SubscriberPoint = {
     id: generateId(),

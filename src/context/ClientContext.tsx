@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Client, Contract, SubscriberPoint } from "@/types";
 import { loadClients, saveClients, generateId } from "@/utils/dataStorage";
@@ -15,7 +16,7 @@ interface ClientContextType {
     name: string, 
     networkNumber: string,
     validityDate: string,
-    type: 'Coordinator' | 'hardware'
+    type: 'Coordinator' | 'Client'
   ) => SubscriberPoint;
   deleteSubscriberPoint: (clientId: string, contractId: string, pointId: string) => void;
   getClient: (clientId: string) => Client | undefined;
@@ -98,7 +99,7 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
     name: string, 
     networkNumber: string,
     validityDate: string,
-    type: 'Coordinator' | 'hardware'
+    type: 'Coordinator' | 'Client'
   ): SubscriberPoint => {
     const newSubscriberPoint: SubscriberPoint = {
       id: generateId(),

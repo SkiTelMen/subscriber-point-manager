@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +23,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { PlusCircle } from "lucide-react";
+import { getFutureDate } from "@/utils/dateUtils";
+import { createDefaultSubscriberPoint } from "@/utils/subscriberPointUtils";
 
 const subscriberPointSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -30,7 +33,7 @@ const subscriberPointSchema = z.object({
     const date = new Date(val);
     return !isNaN(date.getTime());
   }, { message: "Please enter a valid date" }),
-  type: z.enum(['Coordinator', 'hardware'], { required_error: "Type is required" })
+  type: z.enum(['Coordinator', 'Client'], { required_error: "Type is required" })
 });
 
 type SubscriberPointFormData = z.infer<typeof subscriberPointSchema>;
@@ -43,14 +46,16 @@ interface SubscriberPointFormProps {
 const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps) => {
   const { addSubscriberPoint } = useClients();
   const { t } = useLocale();
-
+  
+  const defaultPoint = createDefaultSubscriberPoint();
+  
   const form = useForm<SubscriberPointFormData>({
     resolver: zodResolver(subscriberPointSchema),
     defaultValues: {
       name: "",
       networkNumber: "",
-      validityDate: new Date().toISOString().split("T")[0],
-      type: 'Coordinator'
+      validityDate: defaultPoint.validityDate || getFutureDate(365),
+      type: defaultPoint.type || 'Coordinator'
     },
   });
 
@@ -63,7 +68,14 @@ const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps)
       data.validityDate,
       data.type
     );
-    form.reset();
+    
+    // Reset form with default values
+    form.reset({
+      name: "",
+      networkNumber: "",
+      validityDate: getFutureDate(365),
+      type: 'Coordinator'
+    });
   };
 
   return (
@@ -113,7 +125,7 @@ const SubscriberPointForm = ({ clientId, contractId }: SubscriberPointFormProps)
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="Coordinator">{t("Coordinator")}</SelectItem>
-                    <SelectItem value="hardware">{t("hardware")}</SelectItem>
+                    <SelectItem value="Client">{t("Client")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
