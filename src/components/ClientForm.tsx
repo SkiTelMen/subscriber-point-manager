@@ -20,14 +20,14 @@ import { useClients } from "@/context/ClientContext";
 import { useNavigate } from "react-router-dom";
 
 const clientSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  tin: z.string().min(10, { message: "TIN must be at least 10 characters" }),
-  ogrn: z.string().min(13, { message: "OGRN must be at least 13 characters" }),
-  legalAddress: z.string().min(5, { message: "Legal address is required" }),
-  actualAddress: z.string().min(5, { message: "Actual address is required" }),
-  phoneNumber: z.string().min(5, { message: "Phone number is required" }),
-  contactPerson: z.string().min(2, { message: "Contact person is required" }),
-  contactPersonPhone: z.string().min(5, { message: "Contact person phone is required" }),
+  name: z.string().min(2, { message: "Имя организации должно содержать не менее 2 символов" }),
+  tin: z.string().min(10, { message: "ИНН должен быть равен 10" }),
+  ogrn: z.string().min(13, { message: "ОГРН должен быть равен 13" }),
+  legalAddress: z.string().min(5, { message: "Требуется указать юридический адрес" }),
+  actualAddress: z.string().min(5, { message: "Требуется указать фактический адрес" }),
+  phoneNumber: z.string().min(5, { message: "Требуется указать номер телефона" }),
+  contactPerson: z.string().min(2, { message: "Требуется указать контактное лицо" }),
+  contactPersonPhone: z.string().min(5, { message: "Требуется указать телефон контактного лица" }),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -135,7 +135,7 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Client Name</FormLabel>
+                <FormLabel>Имя организации</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter client name" {...field} />
                 </FormControl>
@@ -149,9 +149,9 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
             name="tin"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>TIN (Tax ID Number)</FormLabel>
+                <FormLabel>ИНН</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter TIN" {...field} />
+                  <Input placeholder="Введите ИНН" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -163,9 +163,9 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
             name="ogrn"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>OGRN</FormLabel>
+                <FormLabel>ОГРН</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter OGRN" {...field} />
+                  <Input placeholder="ОГРН" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -177,9 +177,9 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
             name="legalAddress"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Legal Address</FormLabel>
+                <FormLabel>Юридический адрес</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter legal address" {...field} />
+                  <Input placeholder="Введите юридический адрес" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -192,11 +192,11 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
               name="actualAddress"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Actual Address</FormLabel>
+                  <FormLabel>Фактический адрес</FormLabel>
                   <div className="space-y-2">
                     <FormControl>
                       <Input 
-                        placeholder="Enter actual address" 
+                        placeholder="Введите фактический адрес" 
                         {...field} 
                         disabled={sameAddress} 
                       />
@@ -226,9 +226,9 @@ const ClientForm = ({ client, onSuccess }: ClientFormProps) => {
             name="phoneNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>Номер телефона</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter phone number" {...field} />
+                  <Input placeholder="Введите номер телефона" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
