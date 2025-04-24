@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useClients } from "@/context/ClientContext";
 import { Button } from "@/components/ui/button";
@@ -37,16 +36,10 @@ const TinLookupPage = () => {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <h1 className="text-3xl font-bold">{t("tinLookup")}</h1>
-      <p className="text-muted-foreground">
-        {t("expiringDesc")}
-      </p>
 
       <Card>
         <CardHeader>
           <CardTitle>{t("searchTin")}</CardTitle>
-          <CardDescription>
-            {t("expiringDesc")}
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex space-x-2">
@@ -142,4 +135,3 @@ const TinLookupPage = () => {
 };
 
 export default TinLookupPage;
-

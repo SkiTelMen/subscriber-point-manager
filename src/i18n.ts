@@ -1,9 +1,7 @@
-
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// Translation resources - only keeping Russian
 const resources = {
   ru: {
     translation: {
@@ -67,7 +65,22 @@ const resources = {
       clearFilter: "Очистить фильтр",
       applyFilter: "Применить фильтр",
       subscriberPointsList: "Список абонентских точек",
-      allSubscriberPoints: "Все абонентские точки"
+      allSubscriberPoints: "Все абонентские точки",
+      
+      // Clients page translations
+      clients: "Клиенты",
+      addClient: "Добавить клиента",
+      searchByNameOrTin: "Поиск по названию или ИНН...",
+      name: "Название",
+      contactPerson: "Контактное лицо",
+      contracts: "Договоры",
+      actions: "Действия",
+      view: "Просмотр",
+      edit: "Редактировать",
+      delete: "Удалить",
+      
+      // TIN Lookup translations
+      searchTin: "Поиск по ИНН"
     }
   }
 };

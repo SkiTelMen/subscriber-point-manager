@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useClients } from "@/context/ClientContext";
+import { useLocale } from "@/context/LocaleContext";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 
@@ -30,6 +31,7 @@ import {
 const ClientsPage = () => {
   const { clients, deleteClient } = useClients();
   const navigate = useNavigate();
+  const { t } = useLocale();
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredClients = clients.filter(client => 
@@ -43,13 +45,17 @@ const ClientsPage = () => {
     }
   };
 
+  const handleRowClick = (clientId: string) => {
+    navigate(`/clients/${clientId}`);
+  };
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Clients</h1>
+        <h1 className="text-3xl font-bold">{t('clients')}</h1>
         <Button onClick={() => navigate("/clients/new")}>
           <PlusCircle className="mr-2 h-4 w-4" />
-          Add Client
+          {t('addClient')}
         </Button>
       </div>
 
@@ -57,7 +63,7 @@ const ClientsPage = () => {
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name or TIN..."
+            placeholder={t('searchByNameOrTin')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-8"
@@ -67,48 +73,57 @@ const ClientsPage = () => {
 
       {filteredClients.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-muted-foreground">No clients found. Add a new client to get started.</p>
+          <p className="text-muted-foreground">{t('noClients')}</p>
         </div>
       ) : (
         <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
+                <TableHead>{t('name')}</TableHead>
                 <TableHead>TIN</TableHead>
                 <TableHead>OGRN</TableHead>
-                <TableHead>Contact Person</TableHead>
-                <TableHead>Contracts</TableHead>
-                <TableHead className="w-[80px]">Actions</TableHead>
+                <TableHead>{t('contactPerson')}</TableHead>
+                <TableHead>{t('contracts')}</TableHead>
+                <TableHead className="w-[80px]">{t('actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredClients.map((client) => (
-                <TableRow key={client.id}>
+                <TableRow 
+                  key={client.id} 
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    // Prevent row click when clicking dropdown
+                    if (!(e.target as HTMLElement).closest('.dropdown-trigger')) {
+                      handleRowClick(client.id);
+                    }
+                  }}
+                >
                   <TableCell className="font-medium">{client.name}</TableCell>
                   <TableCell>{client.tin}</TableCell>
                   <TableCell>{client.ogrn}</TableCell>
                   <TableCell>{client.contactPerson}</TableCell>
                   <TableCell>{client.contracts.length}</TableCell>
-                  <TableCell>
+                  <TableCell onClick={e => e.stopPropagation()}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0 dropdown-trigger">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => navigate(`/clients/${client.id}`)}>
                           <Eye className="mr-2 h-4 w-4" />
-                          View
+                          {t('view')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/clients/${client.id}/edit`)}>
                           <Edit className="mr-2 h-4 w-4" />
-                          Edit
+                          {t('edit')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleDelete(client.id)} className="text-destructive">
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
+                          {t('delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

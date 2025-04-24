@@ -1,73 +1,160 @@
-# Welcome to your Lovable project
 
-## Project info
+# Subscriber Management System
 
-**URL**: https://lovable.dev/projects/e476c959-ed8c-425e-8430-2152d26f2a94
+## Overview
+This application is a comprehensive system for managing subscribers, contracts, and client relationships. It supports multiple languages (currently Russian) and provides various features for tracking and managing client data.
 
-## How can I edit this code?
+## Key Features
+- Client Management
+- Contract Tracking
+- Subscriber Points Management
+- TIN-based Lookup
+- Multi-language Support (Russian)
+- PostgreSQL Database Integration
 
-There are several ways of editing your application.
+## Module Description
 
-**Use Lovable**
+### Client Management (`src/pages/ClientsPage.tsx`)
+- Displays list of clients
+- Supports searching by name or TIN
+- CRUD operations for client records
+- Automatic address and phone number copying functionality
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e476c959-ed8c-425e-8430-2152d26f2a94) and start prompting.
+### Contract Management (`src/components/ContractSection.tsx`)
+- Manages contracts per client
+- Tracks contract dates and numbers
+- Links contracts to subscriber points
 
-Changes made via Lovable will be committed automatically to this repo.
+### Subscriber Points (`src/pages/SubscriberPointsPage.tsx`)
+- Manages subscriber points
+- Supports two types: Coordinator and Client
+- Automatic 365-day validity period
+- Filtering and sorting capabilities
 
-**Use your preferred IDE**
+### TIN Lookup (`src/pages/TinLookupPage.tsx`)
+- Quick client search by TIN
+- Displays associated subscriber points
+- Shows contract information
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Database Configuration
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### PostgreSQL Setup
+1. Install PostgreSQL on your server
+2. Configure database connection in \`src/utils/dbService.ts\`:
+   ```typescript
+   export const dbConfig = {
+     host: process.env.DB_HOST || 'localhost',
+     port: parseInt(process.env.DB_PORT || '5432'),
+     database: process.env.DB_NAME || 'subscriber_manager',
+     user: process.env.DB_USER || 'postgres',
+     password: process.env.DB_PASSWORD || 'password',
+   };
+   ```
+3. Set up environment variables in your deployment environment
 
-Follow these steps:
+### Database Migration
+The application includes migration utilities in \`src/utils/dbService.ts\` for transferring data from local storage to PostgreSQL.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Deployment Instructions
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Prerequisites
+- Node.js 18 or higher
+- PostgreSQL 12 or higher
+- npm or yarn package manager
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Deployment Steps
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+1. **Clone the Repository**
+   ```bash
+   git clone <repository-url>
+   cd subscriber-manager
+   ```
 
-**Edit a file directly in GitHub**
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. **Configure Environment Variables**
+   Create environment variables in your deployment environment:
+   - DB_HOST
+   - DB_PORT
+   - DB_NAME
+   - DB_USER
+   - DB_PASSWORD
 
-**Use GitHub Codespaces**
+4. **Build the Application**
+   ```bash
+   npm run build
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+5. **Deploy the Built Files**
+   - Copy the contents of the \`dist\` directory to your web server
+   - Configure your web server (nginx, Apache, etc.) to serve the static files
 
-## What technologies are used for this project?
+6. **Database Setup**
+   ```bash
+   # Connect to PostgreSQL
+   psql -U postgres
+   
+   # Create database
+   CREATE DATABASE subscriber_manager;
+   
+   # Configure database permissions
+   GRANT ALL PRIVILEGES ON DATABASE subscriber_manager TO your_user;
+   ```
 
-This project is built with:
+7. **Start the Application**
+   ```bash
+   # For production
+   npm run start
+   
+   # For development
+   npm run dev
+   ```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Deployment Platforms
 
-## How can I deploy this project?
+#### Heroku
+1. Create a new Heroku application
+2. Add PostgreSQL addon
+3. Configure environment variables in Heroku dashboard
+4. Deploy using Heroku Git or GitHub integration
 
-Simply open [Lovable](https://lovable.dev/projects/e476c959-ed8c-425e-8430-2152d26f2a94) and click on Share -> Publish.
+#### DigitalOcean
+1. Create a new DigitalOcean App
+2. Connect to GitHub repository
+3. Add PostgreSQL database
+4. Configure environment variables
+5. Deploy
 
-## Can I connect a custom domain to my Lovable project?
+## Development
 
-Yes, you can!
+### Local Development Setup
+1. Clone the repository
+2. Install dependencies: \`npm install\`
+3. Start development server: \`npm run dev\`
+4. Access the application at \`http://localhost:8080\`
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Adding New Features
+1. Create new components in \`src/components\`
+2. Add new pages in \`src/pages\`
+3. Update translations in \`src/i18n.ts\`
+4. Update types in \`src/types/index.ts\`
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Code Structure
+- \`src/components\`: Reusable UI components
+- \`src/pages\`: Main application pages
+- \`src/context\`: React context providers
+- \`src/utils\`: Utility functions
+- \`src/types\`: TypeScript type definitions
+- \`src/i18n\`: Internationalization configuration
+
+## Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Commit changes
+4. Create a pull request
+
+## License
+This project is licensed under the MIT License.
