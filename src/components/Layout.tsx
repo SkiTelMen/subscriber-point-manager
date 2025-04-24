@@ -1,10 +1,8 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Users, ListFilter, LayoutDashboard, Calendar } from "lucide-react";
-import LanguageSelector from "./LanguageSelector";
 import { useLocale } from "@/context/LocaleContext";
 
 interface NavItemProps {
@@ -46,8 +44,6 @@ const Layout = ({ children }: LayoutProps) => {
           <h1 className="text-xl font-bold">Subscriber Manager</h1>
           <p className="text-sm text-muted-foreground">Client Management System</p>
         </div>
-        {/* Language selector at the top of sidebar */}
-        <LanguageSelector />
         <nav className="space-y-2">
           <NavItem
             to="/"
@@ -80,7 +76,6 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="md:hidden w-full fixed top-0 z-10 bg-background border-b p-4">
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-bold">Subscriber Manager</h1>
-          {/* Optionally add LanguageSelector for mobile too, if needed */}
         </div>
       </div>
 

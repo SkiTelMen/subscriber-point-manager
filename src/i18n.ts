@@ -1,3 +1,4 @@
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -17,18 +18,13 @@ const resources = {
       allRegisteredPoints: "Все зарегистрированные точки",
       recentClients: "Недавние клиенты",
       recentlyAddedClients: "Недавно добавленные клиенты",
-      view: "Просмотр",
-      noClients: "Нет доступных клиентов",
-      
-      // Language Selector
-      selectLanguage: "Выбрать язык",
-      russian: "Русский",
       
       // Contract-related
       contracts: "Контракты",
       addContract: "Добавить контракт",
       contractNumber: "Номер контракта",
       contractDate: "Дата контракта",
+      numberOfApprovals: "Количество согласований",
       cancel: "Отмена",
       add: "Добавить",
       noContracts: "Нет доступных контрактов",
@@ -41,7 +37,6 @@ const resources = {
       noExpiredPoints: "Нет истекших абонентских точек",
       networkNumber: "Сетевой номер",
       type: "Тип",
-      client: "Клиент",
       hardware: "ОБ",
       validityDate: "Срок действия",
       validUntil: "Действительно до",
@@ -73,7 +68,6 @@ const resources = {
       searchByNameOrTin: "Поиск по названию или ИНН...",
       name: "Название",
       contactPerson: "Контактное лицо",
-      contracts: "Договоры",
       actions: "Действия",
       view: "Просмотр",
       edit: "Редактировать",

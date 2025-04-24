@@ -19,12 +19,14 @@ const ContractSection = ({ client }: ContractSectionProps) => {
   const [showNewContractForm, setShowNewContractForm] = useState(false);
   const [contractNumber, setContractNumber] = useState("");
   const [contractDate, setContractDate] = useState("");
+  const [numberOfApprovals, setNumberOfApprovals] = useState<string>("");
 
   const handleAddContract = () => {
     if (contractNumber && contractDate) {
-      addContract(client.id, contractNumber, contractDate);
+      addContract(client.id, contractNumber, contractDate, numberOfApprovals ? parseInt(numberOfApprovals) : undefined);
       setContractNumber("");
       setContractDate("");
+      setNumberOfApprovals("");
       setShowNewContractForm(false);
     }
   };
@@ -70,6 +72,17 @@ const ContractSection = ({ client }: ContractSectionProps) => {
                 value={contractDate}
                 onChange={(e) => setContractDate(e.target.value)}
                 className="w-full p-2 border rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">{t("numberOfApprovals")}</label>
+              <input
+                type="number"
+                value={numberOfApprovals}
+                onChange={(e) => setNumberOfApprovals(e.target.value)}
+                className="w-full p-2 border rounded"
+                min="0"
+                step="1"
               />
             </div>
             <div className="flex justify-end space-x-2">
