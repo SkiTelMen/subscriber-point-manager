@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useClients } from "@/context/ClientContext";
 import { useLocale } from "@/context/LocaleContext";
@@ -13,14 +13,24 @@ import {
 } from "@/components/ui/card";
 import ContractSection from "@/components/ContractSection";
 import { ArrowLeft, Edit } from "lucide-react";
+import { Client } from "@/types";
 
 const ClientDetailsPage = () => {
   const { clientId } = useParams<{ clientId: string }>();
   const { getClient } = useClients();
   const navigate = useNavigate();
   const { t } = useLocale();
+  const [client, setClient] = useState<Client | undefined>();
 
-  const client = getClient(clientId || "");
+  useEffect(() => {
+    const fetchClient = async () => {
+      if (clientId) {
+        const fetchedClient = await getClient(clientId);
+        setClient(fetchedClient);
+      }
+    };
+    fetchClient();
+  }, [clientId, getClient]);
 
   if (!client) {
     return (

@@ -1,19 +1,30 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useClients } from "@/context/ClientContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ClientForm from "@/components/ClientForm";
 import { ArrowLeft } from "lucide-react";
+import { Client } from "@/types";
 
 const ClientFormPage = () => {
   const { clientId } = useParams<{ clientId: string }>();
   const { getClient } = useClients();
   const navigate = useNavigate();
+  const [client, setClient] = useState<Client | undefined>();
   
   const isEditing = !!clientId && clientId !== "new";
-  const client = isEditing ? getClient(clientId) : undefined;
+
+  useEffect(() => {
+    const fetchClient = async () => {
+      if (isEditing && clientId) {
+        const fetchedClient = await getClient(clientId);
+        setClient(fetchedClient);
+      }
+    };
+    fetchClient();
+  }, [clientId, getClient, isEditing]);
   
   const handleSuccess = () => {
     navigate("/clients");

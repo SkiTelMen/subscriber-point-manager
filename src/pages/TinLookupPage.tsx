@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useClients } from "@/context/ClientContext";
 import { Button } from "@/components/ui/button";
@@ -19,16 +20,22 @@ import {
 } from "@/components/ui/table";
 import { Search } from "lucide-react";
 import { useLocale } from "@/context/LocaleContext";
+import { Client, SubscriberPoint } from "@/types";
+
+interface SearchResults {
+  client: Client;
+  subscriberPoints: (SubscriberPoint & { contractId: string })[];
+}
 
 const TinLookupPage = () => {
   const { getSubscriberPointsByTin } = useClients();
   const [tin, setTin] = useState("");
   const [searchPerformed, setSearchPerformed] = useState(false);
-  const [searchResults, setSearchResults] = useState<ReturnType<typeof getSubscriberPointsByTin>>(null);
+  const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
   const { t } = useLocale();
 
-  const handleSearch = () => {
-    const results = getSubscriberPointsByTin(tin);
+  const handleSearch = async () => {
+    const results = await getSubscriberPointsByTin(tin);
     setSearchResults(results);
     setSearchPerformed(true);
   };
