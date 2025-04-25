@@ -1,15 +1,16 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Client, Contract, SubscriberPoint } from "@/types";
-import { loadClients, saveClients, generateId } from "@/utils/dataStorage";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface ClientContextType {
   clients: Client[];
-  addClient: (client: Omit<Client, "id" | "contracts">) => void;
-  updateClient: (client: Client) => void;
-  deleteClient: (clientId: string) => void;
-  addContract: (clientId: string, contractNumber: string, contractDate: string, numberOfApprovals?: string) => Contract;
-  deleteContract: (clientId: string, contractId: string) => void;
+  addClient: (client: Omit<Client, "id" | "contracts">) => Promise<void>;
+  updateClient: (client: Client) => Promise<void>;
+  deleteClient: (clientId: string) => Promise<void>;
+  addContract: (clientId: string, contractNumber: string, contractDate: string, numberOfApprovals?: string) => Promise<Contract>;
+  deleteContract: (clientId: string, contractId: string) => Promise<void>;
   addSubscriberPoint: (
     clientId: string, 
     contractId: string, 
@@ -17,10 +18,10 @@ interface ClientContextType {
     networkNumber: string,
     validityDate: string,
     type: 'Coordinator' | 'Client'
-  ) => SubscriberPoint;
-  deleteSubscriberPoint: (clientId: string, contractId: string, pointId: string) => void;
-  getClient: (clientId: string) => Client | undefined;
-  getSubscriberPointsByTin: (tin: string) => { client: Client, subscriberPoints: (SubscriberPoint & { contractId: string })[] } | null;
+  ) => Promise<SubscriberPoint>;
+  deleteSubscriberPoint: (clientId: string, contractId: string, pointId: string) => Promise<void>;
+  getClient: (clientId: string) => Promise<Client | undefined>;
+  getSubscriberPointsByTin: (tin: string) => Promise<{ client: Client, subscriberPoints: (SubscriberPoint & { contractId: string })[] } | null>;
 }
 
 const ClientContext = createContext<ClientContextType | undefined>(undefined);
@@ -28,45 +29,132 @@ const ClientContext = createContext<ClientContextType | undefined>(undefined);
 export const ClientProvider = ({ children }: { children: ReactNode }) => {
   const [clients, setClients] = useState<Client[]>([]);
 
+  const fetchClients = async () => {
+    try {
+      const { data: clientsData, error: clientsError } = await supabase
+        .from('clients')
+        .select(`
+          *,
+          contracts:contracts (
+            *,
+            subscriberPoints:subscriber_points (*)
+          )
+        `);
+
+      if (clientsError) throw clientsError;
+
+      const formattedClients = clientsData.map((client: any) => ({
+        ...client,
+        contracts: client.contracts || []
+      }));
+
+      setClients(formattedClients);
+    } catch (error) {
+      console.error('Error fetching clients:', error);
+      toast.error("Failed to load clients");
+    }
+  };
+
   useEffect(() => {
-    setClients(loadClients());
+    fetchClients();
   }, []);
 
-  useEffect(() => {
-    saveClients(clients);
-  }, [clients]);
+  const addClient = async (clientData: Omit<Client, "id" | "contracts">) => {
+    try {
+      const { data, error } = await supabase
+        .from('clients')
+        .insert([clientData])
+        .select()
+        .single();
 
-  const addClient = (clientData: Omit<Client, "id" | "contracts">) => {
-    const newClient: Client = {
-      ...clientData,
-      id: generateId(),
-      contracts: []
-    };
-    setClients(prev => [...prev, newClient]);
+      if (error) throw error;
+
+      setClients(prev => [...prev, { ...data, contracts: [] }]);
+      toast.success("Client added successfully");
+    } catch (error) {
+      console.error('Error adding client:', error);
+      toast.error("Failed to add client");
+      throw error;
+    }
   };
 
-  const updateClient = (updatedClient: Client) => {
-    setClients(prev => prev.map(client => 
-      client.id === updatedClient.id ? updatedClient : client
-    ));
+  const updateClient = async (updatedClient: Client) => {
+    try {
+      const { error } = await supabase
+        .from('clients')
+        .update({
+          name: updatedClient.name,
+          tin: updatedClient.tin,
+          ogrn: updatedClient.ogrn,
+          legal_address: updatedClient.legalAddress,
+          actual_address: updatedClient.actualAddress,
+          phone_number: updatedClient.phoneNumber,
+          contact_person: updatedClient.contactPerson,
+          contact_person_phone: updatedClient.contactPersonPhone,
+        })
+        .eq('id', updatedClient.id);
+
+      if (error) throw error;
+
+      setClients(prev => prev.map(client => 
+        client.id === updatedClient.id ? updatedClient : client
+      ));
+      toast.success("Client updated successfully");
+    } catch (error) {
+      console.error('Error updating client:', error);
+      toast.error("Failed to update client");
+      throw error;
+    }
   };
 
-  const deleteClient = (clientId: string) => {
-    setClients(prev => prev.filter(client => client.id !== clientId));
+  const deleteClient = async (clientId: string) => {
+    try {
+      const { error } = await supabase
+        .from('clients')
+        .delete()
+        .eq('id', clientId);
+
+      if (error) throw error;
+
+      setClients(prev => prev.filter(client => client.id !== clientId));
+      toast.success("Client deleted successfully");
+    } catch (error) {
+      console.error('Error deleting client:', error);
+      toast.error("Failed to delete client");
+      throw error;
+    }
   };
 
-  const addContract = (clientId: string, contractNumber: string, contractDate: string, numberOfApprovals?: string): Contract => {
-    const newContract: Contract = {
-      id: generateId(),
-      clientId,
-      contractNumber,
-      contractDate,
-      numberOfApprovals,
-      subscriberPoints: []
-    };
+  const addContract = async (
+    clientId: string,
+    contractNumber: string,
+    contractDate: string,
+    numberOfApprovals?: string
+  ): Promise<Contract> => {
+    try {
+      const { data, error } = await supabase
+        .from('contracts')
+        .insert([{
+          client_id: clientId,
+          contract_number: contractNumber,
+          contract_date: contractDate,
+          number_of_approvals: numberOfApprovals,
+        }])
+        .select()
+        .single();
 
-    setClients(prev => 
-      prev.map(client => {
+      if (error) throw error;
+
+      const newContract: Contract = {
+        id: data.id,
+        clientId: data.client_id,
+        contractNumber: data.contract_number,
+        contractDate: data.contract_date,
+        numberOfApprovals: data.number_of_approvals,
+        subscriberPoints: []
+      };
+
+      setClients(prev => prev.map(client => {
         if (client.id === clientId) {
           return {
             ...client,
@@ -74,15 +162,27 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
           };
         }
         return client;
-      })
-    );
+      }));
 
-    return newContract;
+      toast.success("Contract added successfully");
+      return newContract;
+    } catch (error) {
+      console.error('Error adding contract:', error);
+      toast.error("Failed to add contract");
+      throw error;
+    }
   };
 
-  const deleteContract = (clientId: string, contractId: string) => {
-    setClients(prev => 
-      prev.map(client => {
+  const deleteContract = async (clientId: string, contractId: string) => {
+    try {
+      const { error } = await supabase
+        .from('contracts')
+        .delete()
+        .eq('id', contractId);
+
+      if (error) throw error;
+
+      setClients(prev => prev.map(client => {
         if (client.id === clientId) {
           return {
             ...client,
@@ -90,29 +190,48 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
           };
         }
         return client;
-      })
-    );
+      }));
+      toast.success("Contract deleted successfully");
+    } catch (error) {
+      console.error('Error deleting contract:', error);
+      toast.error("Failed to delete contract");
+      throw error;
+    }
   };
 
-  const addSubscriberPoint = (
-    clientId: string, 
-    contractId: string, 
-    name: string, 
+  const addSubscriberPoint = async (
+    clientId: string,
+    contractId: string,
+    name: string,
     networkNumber: string,
     validityDate: string,
     type: 'Coordinator' | 'Client'
-  ): SubscriberPoint => {
-    const newSubscriberPoint: SubscriberPoint = {
-      id: generateId(),
-      contractId,
-      name,
-      networkNumber,
-      validityDate,
-      type
-    };
+  ): Promise<SubscriberPoint> => {
+    try {
+      const { data, error } = await supabase
+        .from('subscriber_points')
+        .insert([{
+          contract_id: contractId,
+          name,
+          network_number: networkNumber,
+          validity_date: validityDate,
+          type
+        }])
+        .select()
+        .single();
 
-    setClients(prev => 
-      prev.map(client => {
+      if (error) throw error;
+
+      const newPoint: SubscriberPoint = {
+        id: data.id,
+        contractId: data.contract_id,
+        name: data.name,
+        networkNumber: data.network_number,
+        validityDate: data.validity_date,
+        type: data.type
+      };
+
+      setClients(prev => prev.map(client => {
         if (client.id === clientId) {
           return {
             ...client,
@@ -120,7 +239,7 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
               if (contract.id === contractId) {
                 return {
                   ...contract,
-                  subscriberPoints: [...contract.subscriberPoints, newSubscriberPoint]
+                  subscriberPoints: [...contract.subscriberPoints, newPoint]
                 };
               }
               return contract;
@@ -128,15 +247,27 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
           };
         }
         return client;
-      })
-    );
+      }));
 
-    return newSubscriberPoint;
+      toast.success("Subscriber point added successfully");
+      return newPoint;
+    } catch (error) {
+      console.error('Error adding subscriber point:', error);
+      toast.error("Failed to add subscriber point");
+      throw error;
+    }
   };
 
-  const deleteSubscriberPoint = (clientId: string, contractId: string, pointId: string) => {
-    setClients(prev => 
-      prev.map(client => {
+  const deleteSubscriberPoint = async (clientId: string, contractId: string, pointId: string) => {
+    try {
+      const { error } = await supabase
+        .from('subscriber_points')
+        .delete()
+        .eq('id', pointId);
+
+      if (error) throw error;
+
+      setClients(prev => prev.map(client => {
         if (client.id === clientId) {
           return {
             ...client,
@@ -152,31 +283,79 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
           };
         }
         return client;
-      })
-    );
+      }));
+      toast.success("Subscriber point deleted successfully");
+    } catch (error) {
+      console.error('Error deleting subscriber point:', error);
+      toast.error("Failed to delete subscriber point");
+      throw error;
+    }
   };
 
-  const getClient = (clientId: string): Client | undefined => {
-    return clients.find(client => client.id === clientId);
+  const getClient = async (clientId: string): Promise<Client | undefined> => {
+    try {
+      const { data, error } = await supabase
+        .from('clients')
+        .select(`
+          *,
+          contracts:contracts (
+            *,
+            subscriberPoints:subscriber_points (*)
+          )
+        `)
+        .eq('id', clientId)
+        .single();
+
+      if (error) throw error;
+      if (!data) return undefined;
+
+      return {
+        ...data,
+        contracts: data.contracts || []
+      };
+    } catch (error) {
+      console.error('Error fetching client:', error);
+      toast.error("Failed to fetch client");
+      return undefined;
+    }
   };
 
-  const getSubscriberPointsByTin = (tin: string) => {
-    const client = clients.find(c => c.tin === tin);
-    
-    if (!client) return null;
-    
-    const subscriberPoints: (SubscriberPoint & { contractId: string })[] = [];
-    
-    client.contracts.forEach(contract => {
-      contract.subscriberPoints.forEach(point => {
-        subscriberPoints.push({
+  const getSubscriberPointsByTin = async (tin: string) => {
+    try {
+      const { data: client, error: clientError } = await supabase
+        .from('clients')
+        .select(`
+          *,
+          contracts:contracts (
+            *,
+            subscriberPoints:subscriber_points (*)
+          )
+        `)
+        .eq('tin', tin)
+        .single();
+
+      if (clientError) throw clientError;
+      if (!client) return null;
+
+      const subscriberPoints = client.contracts.flatMap((contract: any) =>
+        contract.subscriberPoints.map((point: any) => ({
           ...point,
           contractId: contract.id
-        });
-      });
-    });
-    
-    return { client, subscriberPoints };
+        }))
+      );
+
+      return {
+        client: {
+          ...client,
+          contracts: client.contracts || []
+        },
+        subscriberPoints
+      };
+    } catch (error) {
+      console.error('Error fetching subscriber points by TIN:', error);
+      toast.error("Failed to fetch subscriber points");
+      return null;
+    }
   };
 
   return (

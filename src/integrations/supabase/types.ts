@@ -9,7 +9,118 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      clients: {
+        Row: {
+          actual_address: string
+          contact_person: string
+          contact_person_phone: string
+          created_at: string
+          id: string
+          legal_address: string
+          name: string
+          ogrn: string
+          phone_number: string
+          tin: string
+        }
+        Insert: {
+          actual_address: string
+          contact_person: string
+          contact_person_phone: string
+          created_at?: string
+          id?: string
+          legal_address: string
+          name: string
+          ogrn: string
+          phone_number: string
+          tin: string
+        }
+        Update: {
+          actual_address?: string
+          contact_person?: string
+          contact_person_phone?: string
+          created_at?: string
+          id?: string
+          legal_address?: string
+          name?: string
+          ogrn?: string
+          phone_number?: string
+          tin?: string
+        }
+        Relationships: []
+      }
+      contracts: {
+        Row: {
+          client_id: string
+          contract_date: string
+          contract_number: string
+          created_at: string
+          id: string
+          number_of_approvals: string | null
+        }
+        Insert: {
+          client_id: string
+          contract_date: string
+          contract_number: string
+          created_at?: string
+          id?: string
+          number_of_approvals?: string | null
+        }
+        Update: {
+          client_id?: string
+          contract_date?: string
+          contract_number?: string
+          created_at?: string
+          id?: string
+          number_of_approvals?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriber_points: {
+        Row: {
+          contract_id: string
+          created_at: string
+          id: string
+          name: string
+          network_number: string
+          type: string
+          validity_date: string
+        }
+        Insert: {
+          contract_id: string
+          created_at?: string
+          id?: string
+          name: string
+          network_number: string
+          type: string
+          validity_date: string
+        }
+        Update: {
+          contract_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          network_number?: string
+          type?: string
+          validity_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriber_points_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
